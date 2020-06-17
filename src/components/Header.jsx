@@ -3,8 +3,8 @@ import React from 'react'
 function Header() {
     return (
         <ul>
-            <a href="#">Gizmo-Revisited</a>
-            <input type="search" name="" placeholder="search articles"/>
+            <h1>Gizmo-Revisited</h1>
+            <input type="search" placeholder="search articles"/>
         </ul>
     )
 }
