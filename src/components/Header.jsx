@@ -1,12 +1,21 @@
-import React from 'react'
+import React from "react";
 
-function Header() {
-    return (
-        <ul>
-            <h1>Gizmo-Revisited</h1>
-            <input type="search" placeholder="search articles"/>
-        </ul>
-    )
+function Header(props) {
+  return (
+    <div className='header-color'>
+      <ul className="flex">
+        <h1 className="logo">Gizmo-Revisited</h1>
+        <div>
+          <input
+            type="search"
+            placeholder="search articles"
+            className="search-box"
+            onChange={props.click}
+          />
+        </div>
+      </ul>
+    </div>
+  );
 }
 
-export default Header
+export default Header;

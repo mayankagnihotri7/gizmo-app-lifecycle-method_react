@@ -2,9 +2,10 @@ import React from "react";
 import Header from "./Header";
 import Footer from "./Footer";
 import AllNews from "./AllNews";
-import NewsSource from "./NewsSource";
-import Headlines from './Headlines';
-import uuid from 'react-uuid';
+// import NewsSource from "./NewsSource";
+import "../styles/App.css";
+import Headlines from "./Headlines";
+import uuid from "react-uuid";
 import { NEWS_API_KEY } from "../config";
 
 class Articles extends React.Component {
@@ -16,6 +17,7 @@ class Articles extends React.Component {
       sources: [],
       headlines: [],
       index: null,
+      inputText: null,
     };
   }
 
@@ -60,40 +62,59 @@ class Articles extends React.Component {
     console.log(articles, "art");
   }
 
-  handleChange = () => {
-    this.setState({ index: uuid() });
+  handleChange = (e) => {
+    this.setState({ inputText: e.target.value });
   };
 
-  mySource = (id) => {
-    fetch(`https://newsapi.org/v2/everything?sources=${id}&apiKey=${NEWS_API_KEY}`)
+  allArticle = () => {
+    fetch(`https://newsapi.org/v2/everything?q=india&apiKey=${NEWS_API_KEY}`)
       .then((res) => res.json())
       .then(({ status, articles }) => {
         if (status === "ok") {
           this.setState({ articles: articles });
         }
       });
-  }
+  };
+
+  mySource = (id) => {
+    fetch(
+      `https://newsapi.org/v2/everything?sources=${id}&apiKey=${NEWS_API_KEY}`
+    )
+      .then((res) => res.json())
+      .then(({ status, articles }) => {
+        if (status === "ok") {
+          this.setState({ articles: articles });
+        }
+      });
+  };
 
   render() {
     console.log("render");
     const { articles, sources, headlines } = this.state;
     return (
       <>
-        <Header />
-        <div>
-          {this.state.sources.slice(1,13).map((source, i) => {
-            return (
-              <li key={source.name + i}>
-                <button onClick={() => this.mySource(source.id)}>{source.name}</button>
-              </li>
-            );
-          })}
+        <Header click={this.handleChange} />
+        <div className="container">
+          <div className="source-btn">
+            <button onClick={this.allArticle}>All</button>
+            {sources.slice(1, 9).map((source, i) => {
+              return (
+                <li key={source.name + i}>
+                  <button
+                    className="btn"
+                    onClick={() => this.mySource(source.id)}
+                  >
+                    {source.name}
+                  </button>
+                </li>
+              );
+            })}
+          </div>
         </div>
-        <h1>Everything:</h1>
-        {articles.length > 0 && <AllNews info={this.state.articles} />}
-        
-        <h3>Top Headlines:</h3>
-        {headlines.length > 0 && <Headlines headline={headlines} />}
+        <div className="grid">
+          {articles.length > 0 && <AllNews info={this.state.articles} />}
+          {headlines.length > 0 && <Headlines headline={headlines} />}
+        </div>
         <Footer />
       </>
     );
