@@ -8,7 +8,7 @@ function Header(props) {
         <div>
           <input
             type="search"
-            placeholder="search articles"
+            placeholder="Search Articles"
             className="search-box"
             onChange={props.click}
           />

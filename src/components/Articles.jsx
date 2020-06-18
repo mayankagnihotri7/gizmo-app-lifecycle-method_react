@@ -2,10 +2,8 @@ import React from "react";
 import Header from "./Header";
 import Footer from "./Footer";
 import AllNews from "./AllNews";
-// import NewsSource from "./NewsSource";
 import "../styles/App.css";
 import Headlines from "./Headlines";
-import uuid from "react-uuid";
 import { NEWS_API_KEY } from "../config";
 
 class Articles extends React.Component {
@@ -17,7 +15,7 @@ class Articles extends React.Component {
       sources: [],
       headlines: [],
       index: null,
-      inputText: null,
+      inputText: '',
     };
   }
 
@@ -90,13 +88,18 @@ class Articles extends React.Component {
 
   render() {
     console.log("render");
-    const { articles, sources, headlines } = this.state;
+    const { articles, sources, headlines, inputText } = this.state;
+
+    const filteredNews = articles.filter(news => {
+      return (news.author.toLowerCase().includes(inputText.toLowerCase()));
+    })
+
     return (
       <>
         <Header click={this.handleChange} />
         <div className="container">
           <div className="source-btn">
-            <button onClick={this.allArticle}>All</button>
+            <button onClick={this.allArticle} className='btn'>All</button>
             {sources.slice(1, 9).map((source, i) => {
               return (
                 <li key={source.name + i}>
@@ -112,7 +115,7 @@ class Articles extends React.Component {
           </div>
         </div>
         <div className="grid">
-          {articles.length > 0 && <AllNews info={this.state.articles} />}
+          {articles.length > 0 && <AllNews info={filteredNews} />}
           {headlines.length > 0 && <Headlines headline={headlines} />}
         </div>
         <Footer />
