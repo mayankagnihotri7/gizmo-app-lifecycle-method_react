@@ -15,14 +15,16 @@ class Articles extends React.Component {
       sources: [],
       headlines: [],
       index: null,
-      inputText: '',
+      inputText: "",
+      country: "in",
+      language: 'en' || null
     };
   }
 
   componentDidMount() {
     // Everything
     console.log("everything");
-    fetch(`https://newsapi.org/v2/everything?q=bitcoin&apiKey=${NEWS_API_KEY}`)
+    fetch(`https://newsapi.org/v2/everything?q=apple&language=${this.state.language}&apiKey=${NEWS_API_KEY}`)
       .then((res) => res.json())
       .then(({ status, articles }) => {
         if (status === "ok") {
@@ -43,7 +45,7 @@ class Articles extends React.Component {
     // Headlines
     console.log("headlines");
     fetch(
-      `https://newsapi.org/v2/top-headlines?country=in&apiKey=${NEWS_API_KEY}`
+      `https://newsapi.org/v2/top-headlines?country=${this.state.country}&apiKey=${NEWS_API_KEY}`
     )
       .then((res) => res.json())
       .then(({ status, articles }) => {
@@ -60,12 +62,25 @@ class Articles extends React.Component {
     console.log(articles, "art");
   }
 
-  handleChange = (e) => {
-    this.setState({ inputText: e.target.value });
+  handleChange = async (e) => {
+    await this.setState({ inputText: e.target.value });
+    console.log(this.state.inputText, 'input here')
+  };
+
+  handleInput = async (e) => {
+    try {
+      await this.setState({ language: e.target.value });
+    } catch (error) {
+      return error;
+    }
+  };
+
+  handleSubmit = (e) => {
+    e.preventDefault();
   };
 
   allArticle = () => {
-    fetch(`https://newsapi.org/v2/everything?q=india&apiKey=${NEWS_API_KEY}`)
+    fetch(`https://newsapi.org/v2/everything?q=${this.state.inputText}&language=${this.state.language}&apiKey=${NEWS_API_KEY}`)
       .then((res) => res.json())
       .then(({ status, articles }) => {
         if (status === "ok") {
@@ -88,18 +103,22 @@ class Articles extends React.Component {
 
   render() {
     console.log("render");
-    const { articles, sources, headlines, inputText } = this.state;
-
-    const filteredNews = articles.filter(news => {
-      return (news.author.toLowerCase().includes(inputText.toLowerCase()));
-    })
+    const { articles, sources, headlines } = this.state;
 
     return (
       <>
-        <Header click={this.handleChange} />
+        <Header
+          click={this.handleChange}
+          value={this.state.language}
+          input={this.handleInput}
+          submit={this.handleSubmit}
+          article={this.allArticle}
+        />
         <div className="container">
           <div className="source-btn">
-            <button onClick={this.allArticle} className='btn'>All</button>
+            <button onClick={this.allArticle} className="btn">
+              All
+            </button>
             {sources.slice(1, 9).map((source, i) => {
               return (
                 <li key={source.name + i}>
@@ -115,7 +134,7 @@ class Articles extends React.Component {
           </div>
         </div>
         <div className="grid">
-          {articles.length > 0 && <AllNews info={filteredNews} />}
+          {articles.length > 0 && <AllNews info={articles} />}
           {headlines.length > 0 && <Headlines headline={headlines} />}
         </div>
         <Footer />
